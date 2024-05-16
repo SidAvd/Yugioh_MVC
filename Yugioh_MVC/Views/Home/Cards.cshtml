@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "Cards";
+}
+
+@model List<CardInfo.Datum>
+
+<div class="text-center">
+    <h1 class="display-4">Card Results</h1>
+    <br/>
+    <hr />
+    <h3>Results: @ViewBag.NumberOfResults</h3>
+    <br />
+    <table class="table p-3 mb-2 bg-danger text-black bg-opacity-25 border border-4 border-secondary">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Card Type</th>
+                <th>Attribute</th>
+                <th>Level</th>
+                <th>Race</th>
+                <th>Archetype</th>
+                <th>Attack Points</th>
+                <th>Defense Points</th>
+                <th>Image Url</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                if (Model != null)
+                {
+                    foreach (var card in Model)
+                    {
+                        <tr>
+                            <td>@card.name</td>
+                            <td>@card.type</td>
+                            <td>@card.attribute</td>
+                            <td>@card.level</td>
+                            <td>@card.race</td>
+                            <td>@card.archetype</td>
+                            <td>@card.atk</td>
+                            <td>@card.def</td>
+                            <td><a href="@card.card_images[0].image_url">image</a></td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td>No Data</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    <a asp-controller="Home" asp-action="SearchCards" class="btn btn-primary">Search Cards</a>
+</div>

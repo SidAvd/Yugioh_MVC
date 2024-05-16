@@ -1,0 +1,72 @@
+﻿@{
+    ViewData["Title"] = "Search Cards";
+}
+
+@model Yugioh_MVC.Models.SearchCardInfo
+
+<div class="text-center">
+    <h1 class="display-4">Search Cards</h1>
+</div>
+
+<form asp-action="SearchCardsForm" asp-controller="Home" class="p-3 mb-2 bg-danger text-black bg-opacity-25 border border-4 border-secondary">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <label class=" mt-4">Name</label>
+                <input class="form-control" type="text" asp-for="Name" />
+            </div>
+            <div class="col">
+                <label class=" mt-4">Card Type</label>
+                @Html.DropDownListFor(
+                         model => model.Type,
+                         new SelectList(ViewBag.CardTypesList),
+                         "Select Card Type",
+                         new { @class = "form-control" })
+            </div>
+            <div class="col"></div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label class=" mt-4">Attribute</label>
+                @Html.DropDownListFor(
+                         model => model.Attribute,
+                         new SelectList(ViewBag.AttributeList),
+                         "Select Card Attribute",
+                         new { @class = "form-control" })
+                <label class=" mt-4">Level</label>
+                @Html.DropDownListFor(
+                         model => model.Level,
+                         new SelectList(ViewBag.LevelList),
+                         "Select Card Level",
+                         new { @class = "form-control" })
+            </div>
+            <div class="col">
+                <label class=" mt-4">Race</label>
+                @Html.DropDownListFor(
+                         model => model.Race,
+                         new SelectList(ViewBag.RaceList),
+                         "Select Card Race",
+                         new { @class = "form-control" })
+                <label class=" mt-4">Attack Points</label>
+                <input class="form-control" type="number" placeholder="Choose Atk points" asp-for="Atk" step="50" min="0" max="100000" />
+            </div>
+            <div class="col">
+                <label class=" mt-4">Archetype</label>
+                @Html.DropDownListFor(
+                         model => model.Archetype,
+                         new SelectList(ViewBag.ArchetypeList),
+                         "Select Card Archetype",
+                         new { @class = "form-control" })
+                <label class=" mt-4">Defense Points</label>
+                <input class="form-control" type="number" placeholder="Choose Def points" asp-for="Def" step="50" min="0" max="100000" />
+            </div>
+        </div>
+        <div class="row justify-content-center align-items-center">
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col">
+                <button class="bt btn-primary mt-4" type="submit">Search Card(s)</button>
+            </div>
+        </div>
+    </div>
+</form>
