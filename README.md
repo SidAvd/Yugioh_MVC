@@ -1,5 +1,5 @@
 # MVC Project
-MVC fetch application search form for YuGiOh cards.
+MVC fetch application, search form for YuGiOh cards.
 
 ## About the Project
 This is my first attempt to create a project in GitHub. Its purpose is for me to exercise and work on certain frameworks, programing and architectural topics such as web development, ASP.NET, MVC design pattern, C# language in general, JSON formatting etc. Being in this exercise context, the project is designed in a way that a lot of different elements are used, meaning it’s not designed necessarily in the simplest and most mainstream way.
