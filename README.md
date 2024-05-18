@@ -14,4 +14,4 @@ After the search button is clicked, the application connects to this API: https:
 The application fetches information from the API: https://ygoprodeck.com/api-guide/. It is designed in the MVC architectural pattern, which means that the project is separated in Models, Views and the Controller. The Views are the pages that the user interacts with (basicaly the Search Form View and the Results View). The Models are classes that are used as blueprints for the exchange of information between the Controller and the Views and between the Controller and the JSON files. And lastly the Controller has all the logic that happens server side and manages the application’s functionality. Emphasis is also placed on the serialization and deserialization of JSON formatted information. The View files use Razor syntax and the CSS framework Bootstrap.
 
 ## Test the App
-To test the app download it from code button as a zip, unzip and run.
+To test the app download it from code button as a zip.
