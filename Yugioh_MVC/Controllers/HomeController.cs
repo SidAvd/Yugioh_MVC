@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Numerics;
 using System.Text.Json;
 using Yugioh_MVC.Models;
-using static Yugioh_MVC.Models.CardInfo;
+using static Yugioh_MVC.Models.CardResults;
 using System.Web;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
@@ -21,9 +21,9 @@ namespace Yugioh_MVC.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IConfiguration _configuration;
-        private readonly string _jsonFilePath;
-        private readonly Uri _yugiohAPIBaseEndpoint;
+        private readonly IConfiguration _configuration;         // For appsettings.json info
+        private readonly string _jsonFilePath;                  // Static JSON info to populate search form elements
+        private readonly Uri _yugiohAPIBaseEndpoint;            // API's URI to fetch info
         private readonly JsonSerializerOptions _jsonOptions;
 
         public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
@@ -38,28 +38,29 @@ namespace Yugioh_MVC.Controllers
             };
         }
 
+        // Starter View
         public IActionResult Index()
         {
             return View();
         }
 
-        // Action to show cards View
+        // Cards View
         public async Task<IActionResult> Cards(SearchCardInfo theModel)
         {
-            if (theModel == null) return View();
-            var CardsSearchResultsList = await SearchCardsRequest(theModel);
-            if (CardsSearchResultsList == null) return View();
-            ViewBag.NumberOfResults = CardsSearchResultsList.Length; // Just to practice ViewBag
-            return View(CardsSearchResultsList.ToList());
+            if (theModel == null) return View();                                // If called with Model == null, passes empty table to the View
+            var CardsSearchResultsList = await SearchCardsRequest(theModel);    // Search/fetch cards
+            if (CardsSearchResultsList == null) return View();                  // If no results, passes empty table to the View
+            ViewBag.NumberOfResults = CardsSearchResultsList.Length;            // Practicing ViewBag
+            return View(CardsSearchResultsList.ToList());                       // Passing List of cards as Model to View
         }
 
-        // Action to show SearchCards View
+        // SearchCards View
         public async Task<IActionResult> SearchCards()
         {
-            ListPopulator listPopulator = await PopulateDropDownBoxesFromJsonFile();
+            ListPopulator listPopulator = await PopulateDropDownBoxesFromJsonFile();    // Static values populate form's Drop Down Lists
             if (listPopulator is null)
                 return RedirectToAction("Error", "Home");
-            ViewBag.AttributeList = listPopulator.attributes;
+            ViewBag.AttributeList = listPopulator.attributes;                           // Pass info with the use of ViewBag
             ViewBag.RaceList = listPopulator.races;
             ViewBag.CardTypesList = listPopulator.cardtypes;
             ViewBag.LevelList = listPopulator.levels;
@@ -72,14 +73,17 @@ namespace Yugioh_MVC.Controllers
         public IActionResult SearchCardsForm(SearchCardInfo model)
         {
             /*TempData["SearchInfoModel"] = JsonConvert.SerializeObject(model);*/
-            return RedirectToAction("Cards","Home", new RouteValueDictionary(model));
+            return RedirectToAction("Cards","Home", new RouteValueDictionary(model));   // Call Home Controller's Cards method passing the model as argument
+                                                                                        // model contains the user's search form choices
         }
 
+        // Privacy View
         public IActionResult Privacy()
         {
             return View();
         }
 
+        // Error View
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -87,9 +91,9 @@ namespace Yugioh_MVC.Controllers
         }
 
 
-        // Takes a string and searches for card names that contain this string,
-        // return a List of cards
-        async Task<Datum[]> SearchCardsRequest(SearchCardInfo searchCardInfo)
+        // Takes the user's search form choices, creates the final endpoint,
+        // fetches the cards that match the endpoint, returns an Array of the cards results.
+        async Task<CardInfo[]> SearchCardsRequest(SearchCardInfo searchCardInfo)
         {
             using (var myClient = new HttpClient())
             {
@@ -98,17 +102,17 @@ namespace Yugioh_MVC.Controllers
                     HttpResponseMessage myResponse = await myClient.GetAsync(CreateParameterEndpointString(searchCardInfo));
                     myResponse.EnsureSuccessStatusCode();
                     string myJson = await myResponse.Content.ReadAsStringAsync();
-                    Rootobject theRootobject = System.Text.Json.JsonSerializer.Deserialize<Rootobject>(myJson, _jsonOptions);
-                    if (theRootobject.data != null)
-                        theRootobject.data = theRootobject.data.OrderBy(x => x.atk).ThenBy(x => x.def).ThenBy(x => x.name).ToArray(); // Just to practice LINQ
-                    return theRootobject.data;
+                    CardInfoArray theCardInfoArray = System.Text.Json.JsonSerializer.Deserialize<CardInfoArray>(myJson, _jsonOptions);
+                    if (theCardInfoArray.data != null)
+                        theCardInfoArray.data = theCardInfoArray.data.OrderBy(x => x.atk).ThenBy(x => x.def).ThenBy(x => x.name).ToArray(); // Practicing LINQ
+                    return theCardInfoArray.data;
                 }
                 catch(HttpRequestException ex)
                 {
-                    Console.WriteLine($"Error: {ex.Message}");
+                    _logger.LogInformation($"Error: {ex.Message}");
                     RedirectToAction("Error", "Home");
+                    return null;
                 }
-                return null;
             }
         }
 
@@ -119,7 +123,7 @@ namespace Yugioh_MVC.Controllers
             return searchCardInfo.ReturnEndpoint(_yugiohAPIBaseEndpoint);
         }
 
-        // Reads static info from file, that is used to populate the drop don lists in search form
+        // Reads static info from json file, that is used to populate the drop down lists in search form
         async Task<ListPopulator> PopulateDropDownBoxesFromJsonFile()
         {
             try
@@ -128,11 +132,11 @@ namespace Yugioh_MVC.Controllers
                 ListPopulator listPopulator = JsonConvert.DeserializeObject<ListPopulator>(jsonString);
                 return listPopulator;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine($"Error: Problem with reading and deserializing the JSON file. {e.Message}");
+                _logger.LogInformation($"Error: {ex.Message}");
+                return null;
             }
-            return null;
         }
     }
 }

@@ -1,15 +1,23 @@
 ﻿namespace Yugioh_MVC.Models
 {
-    public class CardInfo
+    /// <summary>
+    /// Holds all the info for the returned results of all cards that match the user's search form choices.
+    /// </summary>
+    public class CardResults
     {
-
-        public class Rootobject
+        /// <summary>
+        /// All the returned (result) cards' info.
+        /// </summary>
+        public class CardInfoArray
         {
-            public Datum[] data { get; set; }
+            public CardInfo[] data { get; set; }
 
         }
 
-        public class Datum
+        /// <summary>
+        /// One card's info.
+        /// </summary>
+        public class CardInfo
         {
             public int id { get; set; }
             public string name { get; set; }

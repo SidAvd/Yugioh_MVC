@@ -8,11 +8,15 @@ using System.Numerics;
 using System.Reflection;
 using System.Reflection.PortableExecutable;
 using System.Threading;
-using static Yugioh_MVC.Models.CardInfo;
+using static Yugioh_MVC.Models.CardResults;
 
 
 namespace Yugioh_MVC.Models
 {
+    /// <summary>
+    /// Holds all the info from the search form filters that the user has chosen.
+    /// Creates the final endpoint, with the use of the search form filters, to fetch the result cards from the YuGiOh API.
+    /// </summary>
     public class SearchCardInfo
     {
         public int? Id { get; set; }
