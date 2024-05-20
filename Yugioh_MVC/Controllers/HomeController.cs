@@ -93,7 +93,7 @@ namespace Yugioh_MVC.Controllers
 
         // Takes the user's search form choices, creates the final endpoint,
         // fetches the cards that match the endpoint, returns an Array of the cards results.
-        async Task<CardInfo[]> SearchCardsRequest(SearchCardInfo searchCardInfo)
+        private async Task<CardInfo[]> SearchCardsRequest(SearchCardInfo searchCardInfo)
         {
             using (var myClient = new HttpClient())
             {
@@ -117,14 +117,13 @@ namespace Yugioh_MVC.Controllers
         }
 
         // Takes a SearchCardInfo object and returns the final endpoint string
-        string CreateParameterEndpointString(SearchCardInfo searchCardInfo)
+        private string CreateParameterEndpointString(SearchCardInfo searchCardInfo)
         {
-            searchCardInfo.CreateEndpointDictionary();
-            return searchCardInfo.ReturnEndpoint(_yugiohAPIBaseEndpoint);
+            return EndpointCreator.CreateFinalEndpoint(searchCardInfo, _yugiohAPIBaseEndpoint);
         }
 
         // Reads static info from json file, that is used to populate the drop down lists in search form
-        async Task<ListPopulator> PopulateDropDownBoxesFromJsonFile()
+        private async Task<ListPopulator> PopulateDropDownBoxesFromJsonFile()
         {
             try
             {
